@@ -1,7 +1,9 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import type { ServicePack } from "./types";
 
-export async function persistServicePack(db: PrismaClient, pack: ServicePack) {
+type Writer = PrismaClient | Prisma.TransactionClient;
+
+export async function persistServicePack(db: Writer, pack: ServicePack) {
   const department = await db.department.create({
     data: {
       code: pack.department.code,

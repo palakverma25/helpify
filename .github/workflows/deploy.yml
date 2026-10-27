@@ -19,3 +19,4 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: 6e7c1147-5236-4319-ad3e-7f93896e5bb9
+          HELPIFY_DB: postgres

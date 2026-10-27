@@ -6,6 +6,7 @@ import { demoOfficers, demoPassword } from "@/content/demo";
 import { catalog } from "@/i18n/catalog";
 import { isLocale } from "@/i18n/locales";
 import { prisma } from "@/lib/db";
+import { ensureHostedDatabase } from "@/server/ensure-hosted-db";
 
 export default async function LoginPage({
   params,
@@ -14,6 +15,7 @@ export default async function LoginPage({
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
+  await ensureHostedDatabase();
   const session = await getServerSession(authOptions);
   if (session?.user?.id) {
     const officer = await prisma.officer.findUnique({

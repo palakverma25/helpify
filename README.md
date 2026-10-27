@@ -46,7 +46,7 @@ The queue sorts by the severity of the failed condition, then by days left, then
 - **Rules decide. The model explains.** The checklist and the suggested action are computed from the scheme. If `AI_API_KEY` is set, a model may rewrite the two-sentence summary from the failed lines, and it may answer a question from that file’s facts, documents, and conditions. It is told the action the rules already chose and is not allowed to recommend another one. With no key, or when the call fails, the summary is the written template and the question box says an answer is not available. The file opens on that written summary immediately. The model sentence replaces it when the reply arrives, so a slow call does not hold the checklist. The officer still sees every condition.
 - **The question stays on the file.** It sits under the checklist so the written conditions remain the record. The server loads the file again for each question. The browser cannot supply its own facts. Earlier questions on that page are sent only so a follow-up can refer to them. They are dropped when they disagree with the file.
 - **A note when the officer disagrees.** Approving a file the rules already clear needs no note. A rejection, a return, or any choice other than the suggestion needs at least one sentence, because the history has to show why.
-- **SQLite for local use.** Docker is not required to run the console. The Prisma models are ordinary tables plus JSON, so a later hosted Postgres database is a provider and a URL change. Decisions are stored, so a refresh keeps them.
+- **SQLite for local use.** Docker is not required to run the console. The Prisma models are ordinary tables plus JSON. Decisions are stored, so a refresh keeps them. The hosted site uses Postgres, so a recorded decision stays when the server instance is recycled and both officers see the same history.
 - **Officers belong to departments.** Two seeded accounts sign in with Auth.js credentials. There is no public sign-up. Assignment is in the data from the start, so a second department does not need a new access model.
 - **Cache Components is off.** Every screen is the signed-in officer’s live queue. A cached shell would show another officer’s files or a decision that had already changed.
 
@@ -91,7 +91,7 @@ AI_MODEL=gemini-3.5-flash-lite
 - **The model can misread a number.** The question box is told to use only the open file and to say when the file does not contain the answer. It can still phrase a figure poorly. The condition list is the record. The suggestion does not move.
 - **Questions are not stored.** They remain on the page until a refresh. Decision history stores only the officer’s approve, reject, or return.
 - **One filled scheme, two filled languages.** Hindi and English are wired through. A third language or a second department is the path above. It is not populated in this copy.
-- **Database.** Locally, SQLite is a file on this machine (`prisma/dev.db`). The hosted site starts from that same seed. A recorded decision stays only until that server instance is recycled, because the host disk is read-only and there is no shared database.
+- **Database.** Locally, SQLite is a file on this machine (`prisma/dev.db`). `npx prisma db seed` clears recorded decisions there. The hosted site keeps decisions in Postgres and seeds that database only while it is empty.
 - **Training data only.** Names, villages, and identity numbers are invented. The certificate watermark says it is a training copy.
 
 ## Out of scope

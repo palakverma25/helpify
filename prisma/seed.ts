@@ -1,11 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type Prisma } from "@prisma/client";
 import { hash } from "bcryptjs";
 import { demoOfficers, demoPassword } from "../src/content/demo";
 import { persistServicePack } from "../src/content/persist";
 import { servicePacks } from "../src/content/registry";
 import { sampleApplications } from "../src/content/sample-applications";
 
-const prisma = new PrismaClient();
+type Database = PrismaClient | Prisma.TransactionClient;
 
 function daysAgo(days: number) {
   const date = new Date();
@@ -14,7 +14,7 @@ function daysAgo(days: number) {
   return date;
 }
 
-async function main() {
+export async function resetAndSeed(prisma: Database) {
   await prisma.auditLog.deleteMany();
   await prisma.decision.deleteMany();
   await prisma.applicationDocument.deleteMany();
@@ -22,7 +22,10 @@ async function main() {
   await prisma.officerAssignment.deleteMany();
   await prisma.officer.deleteMany();
   await prisma.department.deleteMany();
+  await seedContent(prisma);
+}
 
+export async function seedContent(prisma: Database) {
   const passwordHash = await hash(demoPassword, 10);
   const officers = new Map<string, string>();
   for (const officer of demoOfficers) {
@@ -97,12 +100,17 @@ async function main() {
   }
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (error) => {
-    console.error(error);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+const isDirect = process.argv[1]?.replaceAll("\\", "/").includes("prisma/seed.ts");
+
+if (isDirect) {
+  const prisma = new PrismaClient();
+  resetAndSeed(prisma)
+    .then(async () => {
+      await prisma.$disconnect();
+    })
+    .catch(async (error) => {
+      console.error(error);
+      await prisma.$disconnect();
+      process.exit(1);
+    });
+}

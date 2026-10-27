@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && tsx scripts/prepare-db.mjs && next build",
+    "build": "tsx scripts/prepare-db.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -15,6 +15,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@netlify/database": "^1.1.0",
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.3",
     "next": "16.4.3",

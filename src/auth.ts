@@ -3,6 +3,7 @@ import { compare } from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db";
+import { ensureHostedDatabase } from "@/server/ensure-hosted-db";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,6 +14,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        await ensureHostedDatabase();
         const email = credentials?.email?.trim().toLowerCase();
         const password = credentials?.password;
         if (!email || !password) return null;

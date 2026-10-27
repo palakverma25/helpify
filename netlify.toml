@@ -2,5 +2,8 @@
   command = "npm run build"
   publish = ".next"
 
+[build.environment]
+  HELPIFY_DB = "postgres"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
