@@ -5,6 +5,9 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // Every screen depends on the officer session and the live queue.
+  outputFileTracingIncludes: {
+    "/**": ["./prisma/build.db"],
+  },
   turbopack: {
     rules: {
       "*.css": {
