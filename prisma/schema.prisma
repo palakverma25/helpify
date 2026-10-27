@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Officer {
+  id           String              @id @default(cuid())
+  email        String              @unique
+  name         String
+  designation  String
+  passwordHash String
+  assignments  OfficerAssignment[]
+  decisions    Decision[]
+  auditLogs    AuditLog[]
+}
+
+model Department {
+  id           String                   @id @default(cuid())
+  code         String                   @unique
+  services     Service[]
+  assignments  OfficerAssignment[]
+  translations DepartmentTranslation[]
+}
+
+model DepartmentTranslation {
+  id           String     @id @default(cuid())
+  departmentId String
+  locale       String
+  name         String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@unique([departmentId, locale])
+}
+
+model OfficerAssignment {
+  id           String     @id @default(cuid())
+  officerId    String
+  departmentId String
+  officer      Officer    @relation(fields: [officerId], references: [id], onDelete: Cascade)
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@unique([officerId, departmentId])
+}
+
+model Service {
+  id                  String               @id @default(cuid())
+  code                String               @unique
+  departmentId        String
+  slaDays             Int
+  certificateTemplate String?
+  department          Department           @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  translations        ServiceTranslation[]
+  fields              ServiceField[]
+  documents           DocumentType[]
+  rules               RuleBinding[]
+  applications        Application[]
+}
+
+model ServiceTranslation {
+  id          String  @id @default(cuid())
+  serviceId   String
+  locale      String
+  name        String
+  description String
+  service     Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, locale])
+}
+
+model ServiceField {
+  id           String                    @id @default(cuid())
+  serviceId    String
+  key          String
+  type         String
+  sortOrder    Int
+  service      Service                   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  translations ServiceFieldTranslation[]
+
+  @@unique([serviceId, key])
+}
+
+model ServiceFieldTranslation {
+  id      String       @id @default(cuid())
+  fieldId String
+  locale  String
+  label   String
+  field   ServiceField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@unique([fieldId, locale])
+}
+
+model DocumentType {
+  id           String                     @id @default(cuid())
+  serviceId    String
+  code         String
+  required     Boolean
+  sortOrder    Int
+  service      Service                    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  translations DocumentTypeTranslation[]
+
+  @@unique([serviceId, code])
+}
+
+model DocumentTypeTranslation {
+  id             String       @id @default(cuid())
+  documentTypeId String
+  locale         String
+  label          String
+  documentType   DocumentType @relation(fields: [documentTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([documentTypeId, locale])
+}
+
+model RuleBinding {
+  id        String  @id @default(cuid())
+  serviceId String
+  code      String
+  severity  String
+  onFail    String
+  params    Json
+  summaries Json
+  sortOrder Int
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model Application {
+  id            String                @id @default(cuid())
+  serviceId     String
+  referenceNo   String                @unique
+  status        String
+  submittedAt   DateTime
+  identityKey   String
+  applicantName String
+  locality      String
+  fieldValues   Json
+  service       Service               @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  documents     ApplicationDocument[]
+  decisions     Decision[]
+  auditLogs     AuditLog[]
+
+  @@index([serviceId, status])
+  @@index([identityKey])
+}
+
+model ApplicationDocument {
+  id            String      @id @default(cuid())
+  applicationId String
+  documentCode  String
+  status        String
+  expiresOn     String?
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, documentCode])
+}
+
+model Decision {
+  id                   String      @id @default(cuid())
+  applicationId        String
+  officerId            String
+  action               String
+  note                 String      @default("")
+  suggestedAction      String
+  suggestionOverridden Boolean
+  findingsSnapshot     Json
+  createdAt            DateTime    @default(now())
+  application          Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  officer              Officer     @relation(fields: [officerId], references: [id])
+}
+
+model AuditLog {
+  id            String      @id @default(cuid())
+  applicationId String
+  officerId     String
+  event         String
+  payload       Json
+  createdAt     DateTime    @default(now())
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  officer       Officer     @relation(fields: [officerId], references: [id])
+}
