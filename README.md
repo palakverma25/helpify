@@ -68,6 +68,8 @@ Open [http://localhost:3000](http://localhost:3000). It redirects to Hindi.
 
 `npx prisma db seed` resets the sample files and clears recorded decisions. `npm test` runs the scheme checks.
 
+The same console is published at [https://helpify-tehsil.netlify.app](https://helpify-tehsil.netlify.app). Sign in with the accounts above.
+
 Copy `.env.example` to `.env` if you do not already have one. The model is optional:
 
 ```
@@ -89,7 +91,7 @@ AI_MODEL=gemini-3.5-flash-lite
 - **The model can misread a number.** The question box is told to use only the open file and to say when the file does not contain the answer. It can still phrase a figure poorly. The condition list is the record. The suggestion does not move.
 - **Questions are not stored.** They remain on the page until a refresh. Decision history stores only the officer’s approve, reject, or return.
 - **One filled scheme, two filled languages.** Hindi and English are wired through. A third language or a second department is the path above. It is not populated in this copy.
-- **Local database.** SQLite is a file on this machine (`prisma/dev.db`). It is enough for one reviewer. It is not a shared production database.
+- **Database.** Locally, SQLite is a file on this machine (`prisma/dev.db`). The hosted site starts from that same seed. A recorded decision stays only until that server instance is recycled, because the host disk is read-only and there is no shared database.
 - **Training data only.** Names, villages, and identity numbers are invented. The certificate watermark says it is a training copy.
 
 ## Out of scope
