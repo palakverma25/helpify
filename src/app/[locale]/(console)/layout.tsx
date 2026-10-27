@@ -17,13 +17,13 @@ export default async function ConsoleLayout({
   const copy = catalog(locale);
 
   return (
-    <div className="min-h-full">
+    <div className="flex h-dvh flex-col overflow-hidden">
       <Header
         locale={locale}
         copy={copy}
         officer={{ name: officer.name, designation: officer.designation }}
       />
-      <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+      <main className="mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-y-auto px-4 py-6">{children}</main>
     </div>
   );
 }

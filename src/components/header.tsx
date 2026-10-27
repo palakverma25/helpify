@@ -19,7 +19,7 @@ export function Header({
   const rest = pathname.replace(/^\/(hi|en)/, "");
 
   return (
-    <header className="border-b border-pine-deep bg-pine text-paper">
+    <header className="shrink-0 border-b border-pine-deep bg-pine text-paper">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3">
         <Link href={`/${locale}`} className="flex items-center gap-3">
           <span className="grid h-10 w-10 place-items-center rounded-md bg-paper text-lg font-semibold text-pine">
